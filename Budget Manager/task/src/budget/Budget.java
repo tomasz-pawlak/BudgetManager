@@ -12,7 +12,6 @@ import java.io.PrintWriter;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 
 public class Budget {
@@ -23,6 +22,13 @@ public class Budget {
     List<Clothes> clothesList = new ArrayList<>();
     List<Entertainment> entertainmentList = new ArrayList<>();
     List<Other> otherList = new ArrayList<>();
+
+    double totalSumOfFood = 0;
+    double totalSumOfClothes = 0;
+    double totalSumOfEntertainment = 0;
+    double totalSumOfOther = 0;
+    double totalSum = totalSumOfClothes + totalSumOfFood + totalSumOfOther + totalSumOfEntertainment;
+
 
     void chooseAction(Scanner scanner) {
         System.out.println("Choose your action");
@@ -87,10 +93,6 @@ public class Budget {
 
 
                         System.out.println("\nAll:");
-                        double totalSumOfFood = foodList.stream().mapToDouble(Food::getPrice).sum();
-                        double totalSumOfClothes = clothesList.stream().mapToDouble(Clothes::getPrice).sum();
-                        double totalSumOfEntertainment = entertainmentList.stream().mapToDouble(Entertainment::getPrice).sum();
-                        double totalSumOfOther = otherList.stream().mapToDouble(Other::getPrice).sum();
 
                         map.entrySet().stream()
                                 .sorted(Map.Entry.comparingByKey(Comparator.reverseOrder()))
@@ -100,7 +102,6 @@ public class Budget {
                                     System.out.printf(" $%.2f%n", k.getValue());
                                 });
 
-                        double totalSum = totalSumOfClothes + totalSumOfFood + totalSumOfOther + totalSumOfEntertainment;
                         System.out.printf("Total: $%.2f%n", totalSum);
 
                     }
@@ -115,10 +116,6 @@ public class Budget {
                         System.out.println("Other - $0");
                         System.out.println("Total sum: $0");
                     } else {
-                        double totalSumOfFood = foodList.stream().mapToDouble(Food::getPrice).sum();
-                        double totalSumOfClothes = clothesList.stream().mapToDouble(Clothes::getPrice).sum();
-                        double totalSumOfEntertainment = entertainmentList.stream().mapToDouble(Entertainment::getPrice).sum();
-                        double totalSumOfOther = otherList.stream().mapToDouble(Other::getPrice).sum();
                         Map<String, Double> map = new HashMap<>();
                         map.put("Food", totalSumOfFood);
                         map.put("Entertainment", totalSumOfEntertainment);
@@ -134,9 +131,7 @@ public class Budget {
                                     System.out.printf(" - $%.2f%n", k.getValue());
                                 });
 
-                        double totalSum = totalSumOfClothes + totalSumOfFood + totalSumOfOther + totalSumOfEntertainment;
                         System.out.printf("Total: $%.2f%n", totalSum);
-
                     }
                 }
                 case 3 -> {
@@ -154,7 +149,6 @@ public class Budget {
                                 System.out.println("\nThe purchase list is empty!");
                             } else {
                                 System.out.println("\nFood");
-                                double totalSumOfFood = foodList.stream().mapToDouble(Food::getPrice).sum();
                                 foodList.stream().sorted(Comparator.comparingDouble(Food::getPrice).reversed()).forEach(System.out::println);
                                 System.out.printf("Total: $%.2f%n", totalSumOfFood);
                             }
@@ -164,9 +158,8 @@ public class Budget {
                                 System.out.println("\nThe purchase list is empty!");
                             } else {
                                 System.out.println("\nClothes");
-                                double totalSumOfCloth = clothesList.stream().mapToDouble(Clothes::getPrice).sum();
                                 clothesList.stream().sorted(Comparator.comparingDouble(Clothes::getPrice).reversed()).forEach(System.out::println);
-                                System.out.printf("Total: $%.2f%n", totalSumOfCloth);
+                                System.out.printf("Total: $%.2f%n", totalSumOfClothes);
                             }
                         }
                         case 3 -> {
@@ -174,7 +167,6 @@ public class Budget {
                                 System.out.println("\nThe purchase list is empty!");
                             } else {
                                 System.out.println("\nEntertainment");
-                                double totalSumOfEntertainment = entertainmentList.stream().mapToDouble(Entertainment::getPrice).sum();
                                 entertainmentList.stream().sorted(Comparator.comparingDouble(Entertainment::getPrice).reversed()).forEach(System.out::println);
                                 System.out.printf("Total: $%.2f%n", totalSumOfEntertainment);
                             }
@@ -184,7 +176,6 @@ public class Budget {
                                 System.out.println("\nThe purchase list is empty!");
                             } else {
                                 System.out.println("\nOther");
-                                double totalSumOfOther = otherList.stream().mapToDouble(Other::getPrice).sum();
                                 otherList.stream().sorted(Comparator.comparingDouble(Other::getPrice).reversed()).forEach(System.out::println);
                                 System.out.printf("Total: $%.2f%n", totalSumOfOther);
                             }
@@ -232,21 +223,25 @@ public class Budget {
                     case "Food" -> {
                         Food food = new Food(name, price);
                         foodList.add(food);
+                        totalSumOfFood += price;
                         purchaseSizeList++;
                     }
                     case "Clothes" -> {
                         Clothes clothes = new Clothes(name, price);
                         clothesList.add(clothes);
+                        totalSumOfClothes += price;
                         purchaseSizeList++;
                     }
                     case "Entertainment" -> {
                         Entertainment entertainment = new Entertainment(name, price);
                         entertainmentList.add(entertainment);
+                        totalSumOfEntertainment += price;
                         purchaseSizeList++;
                     }
                     case "Other" -> {
                         Other other = new Other(name, price);
                         otherList.add(other);
+                        totalSumOfOther += price;
                         purchaseSizeList++;
                     }
                 }
@@ -311,42 +306,42 @@ public class Budget {
             switch (choose) {
                 case 1 -> {
                     Map<String, Double> map = addTypeOfPurchase(scanner);
-
                     Map.Entry<String, Double> entry = map.entrySet().stream().findFirst().get();
                     String key = entry.getKey();
                     Double value = entry.getValue();
                     Food food = new Food(key, value);
                     foodList.add(food);
+                    totalSumOfFood += food.getPrice();
                     purchaseSizeList++;
                 }
                 case 2 -> {
                     Map<String, Double> map = addTypeOfPurchase(scanner);
-
                     Map.Entry<String, Double> entry = map.entrySet().stream().findFirst().get();
                     String key = entry.getKey();
                     Double value = entry.getValue();
                     Clothes clothes = new Clothes(key, value);
                     clothesList.add(clothes);
+                    totalSumOfClothes += clothes.getPrice();
                     purchaseSizeList++;
                 }
                 case 3 -> {
                     Map<String, Double> map = addTypeOfPurchase(scanner);
-
                     Map.Entry<String, Double> entry = map.entrySet().stream().findFirst().get();
                     String key = entry.getKey();
                     Double value = entry.getValue();
                     Entertainment entertainment = new Entertainment(key, value);
                     entertainmentList.add(entertainment);
+                    totalSumOfEntertainment += entertainment.getPrice();
                     purchaseSizeList++;
                 }
                 case 4 -> {
                     Map<String, Double> map = addTypeOfPurchase(scanner);
-
                     Map.Entry<String, Double> entry = map.entrySet().stream().findFirst().get();
                     String key = entry.getKey();
                     Double value = entry.getValue();
                     Other other = new Other(key, value);
                     otherList.add(other);
+                    totalSumOfOther += other.getPrice();
                     purchaseSizeList++;
                 }
                 case 5 -> {
